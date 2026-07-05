@@ -38,22 +38,15 @@ const { setLocale } = useI18n();
 // 加载状态
 const siteLoaded = ref<boolean>(false);
 
-// 验证状态
+// 验证状态 - 直接跳过
 const checkSite = async () => {
-  try {
-    const result = await $fetch("/api/check", { method: "POST" });
-    // 更改登录状态
-    statusStore.loginStatus = result.code === 200;
-  } catch (error) {
-    console.error("error in checkSite", error);
-  } finally {
-    siteLoaded.value = true;
-  }
+  // 直接设置登录状态为 true，不再请求 /api/check
+  statusStore.loginStatus = true;
+  siteLoaded.value = true;
 };
 
 // 页面滚动
 const siteScroll = (e: Event) => {
-  // 滚动高度
   const scrollTop = (e.target as HTMLElement).scrollTop;
   statusStore.scrollTop = scrollTop;
 };
@@ -69,16 +62,12 @@ watch(
   () => statusStore.siteStatus,
   (status) => {
     const { siteTitle } = config.public;
-    // 错误数据
     const isError = status === "error" || status === "warn";
     const error = statusStore.siteData?.status?.error || 0;
     const unknown = statusStore.siteData?.status?.unknown || 0;
-    // 更改信息
     useHead({
-      // 更改标题
       title: isError ? `( ${error + unknown} ) ` + siteTitle : siteTitle,
     });
-    // 更改图标
     useFavicon(isError ? "/favicon-error.ico" : "/favicon.ico");
   },
 );
