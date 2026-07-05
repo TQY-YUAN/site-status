@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     }
     const workerData = await response.json();
 
-    // 转换为 UptimeRobot 格式的 monitors 数组
+    // 构造站点数组
     const monitors = workerData.sites.map((site: any, index: number) => ({
       id: index + 1,
       friendly_name: site.name,
@@ -19,31 +19,19 @@ export default defineEventHandler(async (event) => {
       custom_uptime_ranges: '100-100-100',
     }));
 
-    // 统计故障数量（status=0）
     const errorCount = monitors.filter(m => m.status === 0).length;
-    // 没有未知状态
-    const unknownCount = 0;
 
-    // 返回与原始 formatSiteData 一致的结构
+    // 返回符合前端期望的结构
     return {
-      code: 200,
-      message: "success",
-      source: "api",
-      data: {
-        monitors,
-        status: {
-          error: errorCount,
-          unknown: unknownCount,
-        },
-      },
+      data: monitors,                           // 站点数组
+      status: { error: errorCount, unknown: 0 } // 用于头部状态显示
     };
   } catch (error) {
     setResponseStatus(event, 500);
     return {
-      code: 500,
-      message: error instanceof Error ? error.message : "Unknown error",
-      source: "api",
-      data: undefined,
+      data: [],
+      status: { error: 0, unknown: 0 },
+      message: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 });
