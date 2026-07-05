@@ -1,4 +1,3 @@
-// server/api/getMonitors.post.ts
 export default defineEventHandler(async (event) => {
   try {
     const workerUrl = 'https://site.jianc.dpdns.org/status';
@@ -8,30 +7,27 @@ export default defineEventHandler(async (event) => {
     }
     const workerData = await response.json();
 
-    // 构造站点数组
+    // 构造符合 UptimeRobot 格式的数据
     const monitors = workerData.sites.map((site: any, index: number) => ({
       id: index + 1,
       friendly_name: site.name,
       url: site.url,
       status: site.status === 'up' ? 2 : 0,
-      response_time: site.latency || 0,
-      alltimeuptimeratio: '100.0',
-      custom_uptime_ranges: '100-100-100',
+      type: 1, // HTTP
+      interval: 30,
+      // 无历史数据，提供占位
+      logs: [], // 或构造一些示例日志
+      custom_uptime_ranges: '100-100-100', // 24h,7d,30d 全部 100%
     }));
 
-    const errorCount = monitors.filter(m => m.status === 0).length;
-
-    // 直接返回前端期望的结构（不包含 code）
+    // 直接返回 UptimeRobot 格式
     return {
-      data: monitors,                         // 站点数组
-      status: { error: errorCount, unknown: 0 }
+      monitors: monitors,
     };
   } catch (error) {
     setResponseStatus(event, 500);
-    // 错误时也返回相同结构，避免前端崩溃
     return {
-      data: [],
-      status: { error: 0, unknown: 0 }
+      monitors: [],
     };
   }
 });
