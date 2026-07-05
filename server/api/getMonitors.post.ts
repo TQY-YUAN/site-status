@@ -21,19 +21,17 @@ export default defineEventHandler(async (event) => {
 
     const errorCount = monitors.filter(m => m.status === 0).length;
 
-    // 返回符合前端期望的结构（包含 code）
+    // 直接返回前端期望的结构（不包含 code）
     return {
-      code: 200,
       data: monitors,                         // 站点数组
       status: { error: errorCount, unknown: 0 }
     };
   } catch (error) {
     setResponseStatus(event, 500);
+    // 错误时也返回相同结构，避免前端崩溃
     return {
-      code: 500,
       data: [],
-      status: { error: 0, unknown: 0 },
-      message: error instanceof Error ? error.message : 'Unknown error',
+      status: { error: 0, unknown: 0 }
     };
   }
 });
