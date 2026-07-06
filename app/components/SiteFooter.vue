@@ -15,24 +15,22 @@
       </n-button>
     </n-flex>
     <n-flex :size="4" class="text" align="center" vertical>
-      <n-p depth="3">
-        <n-text depth="3" @click="jumpLink(linkData.github)">
-          SiteStatus
-        </n-text>
-        Version {{ version }}
-      </n-p>
+      <!-- 第二行：修改为基于 Cloudflare Workers 自建 -->
       <n-p depth="3">
         {{ $t("footer.basedOn") }}
-        <n-text depth="3" @click="jumpLink('https://uptimerobot.com/')">
-          {{ $t("uptimeRobot") }}
+        <n-text depth="3" @click="jumpLink('https://developers.cloudflare.com/workers/')">
+          Cloudflare Workers
         </n-text>
         {{ $t("footer.interface") }} |
         {{ $t("footer.checkFrequency") }}
         {{ $t("footer.fiveMinutes") }}
       </n-p>
+      <!-- 第三行：年份固定为 2026，链接改为你的主页 -->
       <n-p depth="3">
-        Copyright &copy; 2020 - {{ new Date().getFullYear() }}
-        <n-text depth="3" @click="jumpLink(linkData.home)"> IMSYY </n-text>
+        Copyright &copy; 2026
+        <n-text depth="3" @click="jumpLink('https://jianc.dpdns.org/')">
+          简藏
+        </n-text>
         <n-text
           v-if="siteIcp"
           depth="3"
@@ -47,12 +45,12 @@
 
 <script setup lang="ts">
 const { public: configPublic } = useRuntimeConfig();
-const { siteIcp, version } = configPublic;
+const { siteIcp } = configPublic; // version 已移除
 
 const linkData = {
-  github: "https://github.com/imsyy/site-status",
-  home: "https://www.imsyy.top",
-  email: "mailto:one@imsyy.top",
+  home: "https://jianc.dpdns.org/",
+  // 如需其他图标链接可在此添加，例如：
+  // github: "https://github.com/yourname",
 };
 </script>
 
