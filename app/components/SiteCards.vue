@@ -195,7 +195,18 @@ const refresh = async () => {
 };
 
 onMounted(async () => {
-
+  try {
+    const res = await $fetch('/api/getMonitors', { method: 'POST' });
+    if (res && res.data) {
+      statusStore.siteData = res;
+      statusStore.siteStatus = res.status?.error > 0 ? 'error' : 'normal';
+    } else {
+      statusStore.siteStatus = 'unknown';
+    }
+  } catch (e) {
+    console.error('获取数据失败:', e);
+    statusStore.siteStatus = 'unknown';
+  }
 });
 </script>
 
